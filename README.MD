@@ -1,8 +1,10 @@
 ##Библиотека для проверки и получения электронных чеков из ФНС
+
 ##Зависимости
 com.alibaba:fastjson 
 
 ##Использование:
+
 #### Создание экземпляра
 ```java
 ReceiptChecker receiptChecker = new ReceiptChecker();
