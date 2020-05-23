@@ -207,7 +207,7 @@ public class ReceiptChecker {
         Answer answer = makeRequest(con);
         switch (answer.getHttpCode()) {
             case 200: // Чек получен.
-                receiptRequest.setStringData(answer.getAnswer());
+                receiptRequest.setJsonData(answer.getAnswer());
                 return;
             case 202: // Не произведена предварительная проверка чека. Повторно запрашиваем.
                 if (repeat) {
@@ -314,8 +314,8 @@ public class ReceiptChecker {
             ReceiptRequest receiptRequest = new ReceiptRequest("9251440300018806", "1", "58197", "0050408976", "20200509T203900", "452300");
             System.out.println(receiptChecker.isReceiptValid(receiptRequest));
             receiptChecker.receiveReceipt(receiptRequest);
-            System.out.println(receiptRequest.getStringData());
-            Receipt receipt = JSON.parseObject(receiptRequest.getStringData(), RootObject.class).getDocument().getReceipt();
+            System.out.println(receiptRequest.getJsonData());
+            Receipt receipt = receiptRequest.getReceipt();
             for (Item item : receipt.getItems()) {
                 System.out.println(item.getName() + "   " + item.getPrice() + " * " + item.getQuantity() + " = " + item.getSum());
             }
@@ -329,6 +329,8 @@ public class ReceiptChecker {
             e.printStackTrace();
             System.out.println(e.getAnswer().getAnswer());
         } catch (NotAuthorizedException e) {
+            e.printStackTrace();
+        } catch (ReceiptJSONisEmptyException e) {
             e.printStackTrace();
         }
     }

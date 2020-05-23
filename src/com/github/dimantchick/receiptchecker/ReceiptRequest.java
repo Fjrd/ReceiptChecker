@@ -1,5 +1,10 @@
 package com.github.dimantchick.receiptchecker;
 
+import com.alibaba.fastjson.JSON;
+import com.github.dimantchick.receiptchecker.exceptions.ReceiptJSONisEmptyException;
+import com.github.dimantchick.receiptchecker.receipt.Receipt;
+import com.github.dimantchick.receiptchecker.receipt.RootObject;
+
 /**
  * Данные запроса чека
  *
@@ -13,7 +18,7 @@ public class ReceiptRequest {
     private final String fpd;
     private final String date;
     private final String sum;
-    private String stringData;
+    private String jsonData;
 
     /**
      * Конструктор - создание нового объекта
@@ -97,22 +102,35 @@ public class ReceiptRequest {
     /**
      * Геттер для JSON - представления чека
      * для получения объекта Receipt использовать:
-     * Receipt receipt = JSON.parseObject(receiptRequest.getStringData(), RootObject.class).getDocument().getReceipt();
+     * Receipt receipt = receiptRequest.getReceipt();
      *
      * @return возвращает JSON - представления чека
      */
-    public String getStringData() {
-        return stringData;
+    public String getJsonData() {
+        return jsonData;
     }
 
     /**
      * Сеттер для JSON - представления чека
      *
-     * @param stringData - JSON - представление чека
+     * @param jsonData - JSON - представление чека
      *                   для получения объекта Receipt использовать:
-     *                   Receipt receipt = JSON.parseObject(receiptRequest.getStringData(), RootObject.class).getDocument().getReceipt();
+     *                   getReceipt();
      */
-    public void setStringData(String stringData) {
-        this.stringData = stringData;
+    public void setJsonData(String jsonData) {
+        this.jsonData = jsonData;
+    }
+
+    /**
+     * Получение объекта Receipt
+     *
+     * @return возвращает Receipt объект чека
+     * @throws ReceiptJSONisEmptyException - чек не получен из ФНС
+     */
+    public Receipt getReceipt() throws ReceiptJSONisEmptyException {
+        if (jsonData == null) {
+            throw new ReceiptJSONisEmptyException();
+        }
+        return JSON.parseObject(getJsonData(), RootObject.class).getDocument().getReceipt();
     }
 }
